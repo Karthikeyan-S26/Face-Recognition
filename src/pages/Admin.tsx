@@ -105,7 +105,7 @@ export default function Admin() {
 
           const img = await faceapi.fetchImage(photoUrl);
           const detection = await faceapi
-            .detectSingleFace(img)
+            .detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 }))
             .withFaceLandmarks()
             .withFaceDescriptor();
 
@@ -182,7 +182,7 @@ export default function Admin() {
         try {
           const img = await faceapi.fetchImage(profile.photo_url);
           const detection = await faceapi
-            .detectSingleFace(img, new faceapi.SsdMobilenetv1Options())
+            .detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 }))
             .withFaceLandmarks()
             .withFaceDescriptor();
 
@@ -277,7 +277,7 @@ export default function Admin() {
             const objUrl = URL.createObjectURL(file);
             const img = await faceapi.fetchImage(objUrl);
             const detection = await faceapi
-              .detectSingleFace(img, new faceapi.SsdMobilenetv1Options())
+              .detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 }))
               .withFaceLandmarks()
               .withFaceDescriptor();
             if (detection) {
@@ -372,7 +372,7 @@ export default function Admin() {
           ]);
           const img = await faceapi.fetchImage(photoUrl);
           const detection = await faceapi
-            .detectSingleFace(img)
+            .detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 }))
             .withFaceLandmarks()
             .withFaceDescriptor();
           descriptor = detection ? Array.from(detection.descriptor) : null;
