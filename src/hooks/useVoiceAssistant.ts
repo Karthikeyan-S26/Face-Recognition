@@ -221,8 +221,8 @@ export function useVoiceAssistant(detectedProfile: Profile | null, allProfiles: 
                     greeting = `Hello ${detectedProfile.name.split(' ')[0]}. How can I assist you today?`;
                 }
 
-                // We don't need to manually map to ogg here because speakResponse handles custom mapping automatically now!
-                setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: greeting }]);
+                // We purposefully DO NOT add this to setMessages, so the text chat 
+                // remains empty/unstarted until the user manually invokes the dragon button!
                 speakResponse(greeting);
             }
         }
