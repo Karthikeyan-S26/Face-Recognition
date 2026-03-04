@@ -3,6 +3,7 @@ import { useVoiceAssistant } from '@/hooks/useVoiceAssistant';
 import type { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Mic, Loader2, Volume2, Square } from 'lucide-react';
+import dragonLogo from '@/assets/it-logo.jpg';
 
 interface AIChatbotProps {
     detectedProfile: Profile | null;
@@ -49,8 +50,8 @@ export function AIChatbot({ detectedProfile, allProfiles }: AIChatbotProps) {
             <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={scrollRef}>
                 {messages.length === 0 ? (
                     <div className="flex h-full flex-col items-center justify-center text-center opacity-50">
-                        <Mic className="h-8 w-8 mb-2 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">Click the <b>Dragon Microphone</b> below<br />and ask a question.</p>
+                        <img src={dragonLogo} alt="Dragon Logo" className="h-12 w-12 mb-3 rounded-full object-cover grayscale opacity-50" />
+                        <p className="text-sm text-muted-foreground">Tap the <b>Dragon</b> below<br />to speak with Nova.</p>
                     </div>
                 ) : (
                     messages.map((msg) => (
@@ -97,28 +98,42 @@ export function AIChatbot({ detectedProfile, allProfiles }: AIChatbotProps) {
                     </span>
                 )}
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     {status === 'speaking' && (
                         <Button
                             size="icon"
                             variant="outline"
                             onClick={stopSpeaking}
-                            className="h-10 w-10 shrink-0 text-muted-foreground hover:text-foreground rounded-full"
+                            className="h-14 w-14 shrink-0 text-muted-foreground hover:text-foreground rounded-full"
                             title="Stop Speaking"
                         >
-                            <Square className="h-4 w-4" />
+                            <Square className="h-5 w-5" />
                         </Button>
                     )}
-                    <Button
-                        size="icon"
-                        variant={status === 'listening' ? "destructive" : "default"}
+                    <button
                         onClick={startListening}
-                        disabled={status === 'thinking'}
-                        className={`h-10 w-10 shrink-0 rounded-full transition-all ${status === 'listening' ? 'animate-pulse' : ''}`}
-                        title="Press Dragon Button to Dictate"
+                        disabled={status !== 'idle'}
+                        aria-label="Start voice conversation with Nova"
+                        title="Tap Dragon to speak with Nova"
+                        style={{
+                            boxShadow: status === 'listening' ? '0 0 15px rgba(34, 197, 94, 0.6)' : 'none',
+                        }}
+                        className={`
+                            relative flex items-center justify-center 
+                            h-14 w-14 shrink-0 rounded-full border-2 bg-white 
+                            overflow-hidden transition-all duration-300
+                            ${status !== 'idle' ? 'opacity-50 cursor-not-allowed border-muted' : 'border-[#22c55e] hover:shadow-[0_0_15px_rgba(34,197,94,0.6)] cursor-pointer hover:scale-105 active:scale-95'}
+                        `}
                     >
-                        {status === 'thinking' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mic className="h-4 w-4" />}
-                    </Button>
+                        {status === 'listening' && (
+                            <span className="absolute inset-0 rounded-full border-[3px] border-green-500 animate-ping opacity-75"></span>
+                        )}
+                        <img
+                            src={dragonLogo}
+                            alt="IT Dragon Logo"
+                            className="h-full w-full object-cover"
+                        />
+                    </button>
                 </div>
             </div>
         </div>

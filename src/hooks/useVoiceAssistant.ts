@@ -121,52 +121,7 @@ export function useVoiceAssistant(detectedProfile: Profile | null, allProfiles: 
         synthRef.current.speak(utterance);
     }, []);
 
-    // Profile auto-greeting
-    useEffect(() => {
-        if (detectedProfile) {
-            // Don't greet if we already greeted this exact person this session
-            if (hasGreetedProfileRef.current !== detectedProfile.id) {
-                hasGreetedProfileRef.current = detectedProfile.id;
-
-                let greeting = '';
-                let customAudioUrl = null;
-
-                if (detectedProfile.name.toLowerCase().includes('aruna')) {
-                    greeting = `Hello Professor Aruna. How can I assist you today?`;
-                    customAudioUrl = '/voices/aruna.ogg';
-                } else if (detectedProfile.role_type === 'staff') {
-                    greeting = `Hello Professor ${detectedProfile.name}. How can I assist you today?`;
-                } else {
-                    greeting = `Hello ${detectedProfile.name}. How can I assist you today?`;
-                }
-
-                setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: greeting }]);
-
-                if (customAudioUrl) {
-                    const audio = new window.Audio(customAudioUrl);
-                    audioRef.current = audio;
-                    setStatus('speaking');
-                    audio.onended = () => {
-                        setStatus('idle');
-                    };
-                    audio.onerror = () => {
-                        setStatus('idle');
-                    };
-                    audio.play().catch(e => {
-                        console.error('Audio play failed:', e);
-                        setStatus('idle');
-                    });
-                } else {
-                    speakResponse(greeting);
-                }
-            }
-        } else {
-            // Profile cleared, reset greeted stat so they can be greeted again if they return 
-            // (optional depending on UX preference)
-            // hasGreetedProfileRef.current = null;
-        }
-    }, [detectedProfile, speakResponse]);
-
+    // Profile auto-greeting has been intentionally removed as requested
 
     const sendToLLM = async (userText: string) => {
         setStatus('thinking');
