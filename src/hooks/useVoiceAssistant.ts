@@ -109,6 +109,7 @@ export function useVoiceAssistant(detectedProfile: Profile | null, allProfiles: 
             'aruna': '/voices/aruna_mam.ogg',
             'chairman': '/voices/chairman.ogg',
             'gopi': '/voices/gopi_sir.ogg',
+            'kishore': '/voices/kishore.ogg',
             'mohanadevi': '/voices/mohanadevi_mam.ogg',
             'muthumanickam': '/voices/muthumanickam_sir.ogg',
             'nandhini': '/voices/nandhini_mam.ogg',
@@ -190,6 +191,8 @@ export function useVoiceAssistant(detectedProfile: Profile | null, allProfiles: 
                     greeting = `Greetings Chairman. Welcome to the IT Department.`;
                 } else if (lowerName.includes('gopi')) {
                     greeting = `Hello Professor Gopi. How can I assist you today?`;
+                } else if (lowerName.includes('kishore')) {
+                    greeting = `Hello Kishore. Welcome to the IT Department!`;
                 } else if (lowerName.includes('mohanadevi')) {
                     greeting = `Hello Professor Mohanadevi. How can I assist you today?`;
                 } else if (lowerName.includes('muthumanickam')) {
