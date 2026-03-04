@@ -168,7 +168,7 @@ export default function Admin() {
           faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
           faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         ]);
-      } catch (err: any) {
+      } catch (err) {
         toast.error('Failed to load face detection models');
         return;
       }
@@ -210,8 +210,12 @@ export default function Admin() {
         }
       }
       toast.success(`Done! ✅ ${successCount} computed, ❌ ${failCount} failed`);
-    } catch (err: any) {
-      toast.error(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(`Error: ${err.message}`);
+      } else {
+        toast.error('An unknown error occurred');
+      }
     } finally {
       setIsComputingAll(false);
     }
@@ -317,8 +321,12 @@ export default function Admin() {
 
       toast.success(`Sync Complete: ✅ ${success} processed, ❌ ${failed} failed`);
 
-    } catch (err: any) {
-      toast.error('Failed to sync dataset: ' + err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error('Failed to sync dataset: ' + err.message);
+      } else {
+        toast.error('Failed to sync dataset');
+      }
     } finally {
       setIsSyncing(false);
       if (fileInputRef.current) fileInputRef.current.value = ''; // Reset
@@ -423,7 +431,7 @@ export default function Admin() {
             <div className="flex items-center gap-3">
               <input
                 type="file"
-                // @ts-ignore - webkitdirectory is non-standard but works in modern browsers
+                // @ts-expect-error - webkitdirectory is non-standard but works in modern browsers
                 webkitdirectory="true"
                 directory="true"
                 multiple
