@@ -23,6 +23,7 @@ export function useVoiceAssistant(detectedProfile: Profile | null) {
     const recognitionRef = useRef<any>(null);
     const synthRef = useRef<SpeechSynthesis | null>(null);
     const isListeningRef = useRef(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     // Profile-based greeting tracking
@@ -85,6 +86,11 @@ export function useVoiceAssistant(detectedProfile: Profile | null) {
         if (synthRef.current && synthRef.current.speaking) {
             synthRef.current.cancel();
         }
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            audioRef.current = null;
+        }
         if (status === 'speaking') {
             setStatus('idle');
         }
@@ -119,14 +125,36 @@ export function useVoiceAssistant(detectedProfile: Profile | null) {
                 hasGreetedProfileRef.current = detectedProfile.id;
 
                 let greeting = '';
-                if (detectedProfile.role_type === 'staff') {
+                let customAudioUrl = null;
+
+                if (detectedProfile.name.toLowerCase().includes('aruna')) {
+                    greeting = `Hello Professor Aruna. How can I assist you today?`;
+                    customAudioUrl = '/voices/aruna.ogg';
+                } else if (detectedProfile.role_type === 'staff') {
                     greeting = `Hello Professor ${detectedProfile.name}. How can I assist you today?`;
                 } else {
                     greeting = `Hello ${detectedProfile.name}. How can I assist you today?`;
                 }
 
                 setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: greeting }]);
-                speakResponse(greeting);
+
+                if (customAudioUrl) {
+                    const audio = new window.Audio(customAudioUrl);
+                    audioRef.current = audio;
+                    setStatus('speaking');
+                    audio.onended = () => {
+                        setStatus('idle');
+                    };
+                    audio.onerror = () => {
+                        setStatus('idle');
+                    };
+                    audio.play().catch(e => {
+                        console.error('Audio play failed:', e);
+                        setStatus('idle');
+                    });
+                } else {
+                    speakResponse(greeting);
+                }
             }
         } else {
             // Profile cleared, reset greeted stat so they can be greeted again if they return 
