@@ -115,31 +115,7 @@ export function useVoiceAssistant(detectedProfile: Profile | null, allProfiles: 
 
     useEffect(() => {
         detectedProfileRef.current = detectedProfile;
-
-        if (detectedProfile && detectedProfile.id !== lastGreetedIdRef.current) {
-            lastGreetedIdRef.current = detectedProfile.id;
-
-            setStatus('thinking');
-            let name = '';
-            if (detectedProfile.role_type === 'staff') {
-                name = `Professor ${detectedProfile.name}`;
-            } else {
-                name = detectedProfile.name;
-            }
-
-            const greeting = name ? `Hello ${name}. Welcome to the IT Tech Arena.` : `Hello. Welcome to the IT Tech Arena.`;
-            setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: greeting }]);
-
-            // We use setTimeout to ensure states flush before speaking, optional but safe
-            setTimeout(() => {
-                speakResponse(greeting, true);
-            }, 500);
-
-        } else if (!detectedProfile) {
-            // Reset when the detection clears
-            lastGreetedIdRef.current = null;
-        }
-    }, [detectedProfile, speakResponse]);
+    }, [detectedProfile]);
 
     const resetListeningTimeout = () => {
         if (listeningTimeoutRef.current) clearTimeout(listeningTimeoutRef.current);
