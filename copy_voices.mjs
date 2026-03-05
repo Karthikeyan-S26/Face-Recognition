@@ -23,8 +23,13 @@ function copyVoicesRecursively(dir) {
             fs.copyFileSync(srcPath, destPath);
             console.log(`Copied ${dir}/${oggFile.name} -> ${destDir}/${cleanName}${ext}`);
 
-            // Map strictly to the full profile folder name (lowercased)
-            const key = folderName.toLowerCase();
+            // Generate a clean keyword for text matching
+            let words = folderName.toLowerCase()
+                .replace(/[-.\_]/g, ' ')
+                .split(/\s+/);
+            const stopWords = ['dr', 'mr', 'mrs', 'prof', 'mam', 'sir', 'dean', 'cse', 'mech', 'ece', 'eee', 'civil', 'age', 'bme'];
+            let keyWords = words.filter(w => w.length > 2 && !stopWords.includes(w));
+            let key = keyWords.length > 0 ? keyWords[0] : cleanName.split('_')[0];
 
             voiceMap[key] = `/voices/${cleanName}${ext}`;
         }
